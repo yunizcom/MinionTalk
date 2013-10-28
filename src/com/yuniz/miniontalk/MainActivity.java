@@ -45,11 +45,19 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.view.View;
+import com.revmob.RevMob;
+import com.revmob.RevMobTestingMode;
+import com.revmob.ads.banner.RevMobBanner;
 
 public class MainActivity extends Activity implements OnInitListener, OnUtteranceCompletedListener {
 	
@@ -64,6 +72,8 @@ public class MainActivity extends Activity implements OnInitListener, OnUtteranc
 	
 	private int SPEECH_REQUEST_CODE = 1234;
 	private TextToSpeech tts;
+	
+	private RevMob revmob;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -147,6 +157,13 @@ public class MainActivity extends Activity implements OnInitListener, OnUtteranc
 		}
 
 		tts = new TextToSpeech(this, this);
+		
+		/*----RevMob Ads----*/
+		revmob = RevMob.start(this);
+//revmob.setTestingMode(RevMobTestingMode.WITH_ADS);
+		revmob.showFullscreen(this);
+        /*----RevMob Ads----*/
+		
 	}
 	
 	@Override
@@ -224,6 +241,8 @@ public class MainActivity extends Activity implements OnInitListener, OnUtteranc
                 
                 if (matches.size() == 0)
                 {
+                	tts.setPitch(0);
+        			tts.setSpeechRate((float) 1.5);
                 	tts.speak("ERROR : HEARD NOTHING, PLEASE SPEAK AGAIN.", TextToSpeech.QUEUE_FLUSH, null);
                 }
                 else
@@ -243,6 +262,8 @@ public class MainActivity extends Activity implements OnInitListener, OnUtteranc
             }
             else
             {
+            	tts.setPitch(0);
+    			tts.setSpeechRate((float) 1.5);
             	tts.speak("ERROR : CONNECTION TO JARVIS FAILED.", TextToSpeech.QUEUE_FLUSH, null);
             }
         }
@@ -264,11 +285,15 @@ public class MainActivity extends Activity implements OnInitListener, OnUtteranc
 			if(json == null){
 				Toast.makeText(getApplicationContext(), "You need internet connection to continue." , Toast.LENGTH_LONG).show();
 			}else{
+				tts.setPitch(0);
+				tts.setSpeechRate((float) 1.5);
 				tts.speak(json.getString("botsay"), TextToSpeech.QUEUE_FLUSH, null);
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			tts.setPitch(0);
+			tts.setSpeechRate((float) 1.5);
 			tts.speak("ERROR : CONNECTION TO JARVIS DISCONNECTED.", TextToSpeech.QUEUE_FLUSH, null);
 		}
 		//-------load JSON
